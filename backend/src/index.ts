@@ -1,5 +1,6 @@
 import cors from "cors";
 import express from "express";
+import { fileURLToPath } from "node:url";
 import { WebSocketServer } from "ws";
 import { z } from "zod";
 import { config } from "./config.js";
@@ -10,6 +11,7 @@ import type { AnalyzeFocusResponse, FocusFramePayload } from "./types.js";
 const app = express();
 app.use(cors({ origin: config.allowedOrigin }));
 app.use(express.json({ limit: "20mb" }));
+app.use(express.static(fileURLToPath(new URL("../public", import.meta.url))));
 
 const focusFrameSchema = z.object({
   sessionId: z.string().uuid().optional(),

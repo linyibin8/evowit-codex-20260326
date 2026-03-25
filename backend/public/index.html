@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>EvoWit Demo</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div>
+        <p class="eyebrow">EvoWit Browser Demo</p>
+        <h1>Test the tutoring loop before the iPhone build is ready.</h1>
+        <p class="lede">
+          Upload a homework, reading, or writing image, add optional transcript text, and get the same
+          scaffold-style guidance the mobile app uses.
+        </p>
+      </div>
+    </section>
+
+    <section class="panel">
+      <form id="demo-form" class="form">
+        <label>
+          Mode
+          <select id="mode">
+            <option value="reading">Reading</option>
+            <option value="recitation">Recitation</option>
+            <option value="homework" selected>Homework</option>
+            <option value="writing">Writing</option>
+          </select>
+        </label>
+
+        <label>
+          Grade band
+          <input id="gradeBand" value="Upper elementary" />
+        </label>
+
+        <label>
+          Transcript
+          <textarea id="transcript" rows="4" placeholder="Optional student speech transcript"></textarea>
+        </label>
+
+        <label>
+          Attention score
+          <input id="attentionScore" type="number" min="0" max="1" step="0.01" value="0.85" />
+        </label>
+
+        <label>
+          Focus image
+          <input id="imageInput" type="file" accept="image/*" required />
+        </label>
+
+        <button type="submit">Analyze</button>
+      </form>
+
+      <section class="result" id="result">
+        <p class="placeholder">Result will appear here.</p>
+      </section>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
