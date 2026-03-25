@@ -1,0 +1,30 @@
+name: EvoWit
+options:
+  bundleIdPrefix: com.evowit
+packages: {}
+targets:
+  EvoWit:
+    type: application
+    platform: iOS
+    deploymentTarget: "17.0"
+    sources:
+      - EvoWit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.evowit.student
+        INFOPLIST_FILE: EvoWit/Info.plist
+        SWIFT_VERSION: 5.0
+        TARGETED_DEVICE_FAMILY: "1,2"
+    info:
+      path: EvoWit/Info.plist
+      properties:
+        UILaunchScreen: {}
+        NSCameraUsageDescription: 需要访问摄像头来识别学生视线与书本文本
+        NSMicrophoneUsageDescription: 需要访问麦克风来做朗读与口语陪练
+        NSSpeechRecognitionUsageDescription: 需要访问语音识别来理解学生朗读内容
+        UIRequiredDeviceCapabilities:
+          - arkit
+          - front-facing-camera
+        UIApplicationSceneManifest:
+          UIApplicationSupportsMultipleScenes: false
+
