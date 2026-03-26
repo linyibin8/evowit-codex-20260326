@@ -4,13 +4,20 @@ platform :ios do
   desc "Build and upload EvoWit to TestFlight"
   lane :beta do
     sh("xcodegen generate")
+    automatic_code_signing(
+      path: "EvoWit.xcodeproj",
+      use_automatic_signing: true,
+      team_id: ENV["APPLE_DEVELOPER_TEAM_ID"]
+    )
     build_app(
       project: "EvoWit.xcodeproj",
       scheme: "EvoWit",
+      export_xcargs: "-allowProvisioningUpdates",
       export_method: "app-store",
       output_directory: "../build"
     )
     upload_to_testflight(
+      username: "3972104921@qq.com",
       skip_waiting_for_build_processing: true
     )
   end

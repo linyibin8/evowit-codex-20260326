@@ -1,4 +1,4 @@
 app_identifier("com.evowit.student")
 apple_id("3972104921@qq.com")
-itc_team_id("")
-team_id("")
+itc_team_id(ENV["APP_STORE_CONNECT_TEAM_ID"])
+team_id(ENV["APPLE_DEVELOPER_TEAM_ID"])
