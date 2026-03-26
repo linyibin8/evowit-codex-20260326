@@ -12,4 +12,5 @@ DerivedData/
 *.xcodeproj/xcuserdata
 *.xcuserstate
 *.log
-
+.playwright-cli/
+backend/*.traineddata

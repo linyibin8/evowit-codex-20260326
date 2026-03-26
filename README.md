@@ -37,6 +37,7 @@ scripts/
 - ROI crop around the focus point
 - local speech transcription
 - backend session memory across turns
+- optional local OCR fallback with `tesseract.js`
 - `gpt-5.4` focus-frame analysis with scaffold-style guidance
 - realtime token endpoint for future OpenAI Realtime voice loop
 - basic release scripts for Mac build and TestFlight upload flow
@@ -51,6 +52,27 @@ npm run dev
 ```
 
 Server default: `http://0.0.0.0:8787`
+
+Important:
+
+- set `OPENAI_API_KEY` in `backend/.env`
+- without it, upload analysis will reach the backend and OCR stage, but fail on the model call
+
+## Browser demo
+
+After starting the backend, open:
+
+```text
+http://127.0.0.1:8787
+```
+
+The browser demo now uploads an image file directly and shows:
+
+- OCR fallback text
+- recognized text from the model
+- diagnosis
+- scaffold-style next-step guidance
+- rolling session summary
 
 ## iOS setup on Mac
 

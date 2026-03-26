@@ -1,14 +1,17 @@
 import cors from "cors";
 import express from "express";
 import { fileURLToPath } from "node:url";
+import multer from "multer";
 import { WebSocketServer } from "ws";
 import { z } from "zod";
 import { config } from "./config.js";
 import { analyzeFocusFrame, createRealtimeClientSecret } from "./coach.js";
+import { extractTextFromImageBuffer } from "./ocr.js";
 import { appendTurn, getOrCreateSession, getSessionSummary } from "./session-store.js";
 import type { AnalyzeFocusResponse, FocusFramePayload } from "./types.js";
 
 const app = express();
+const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 10 * 1024 * 1024 } });
 app.use(cors({ origin: config.allowedOrigin }));
 app.use(express.json({ limit: "20mb" }));
 app.use(express.static(fileURLToPath(new URL("../public", import.meta.url))));
@@ -18,6 +21,7 @@ const focusFrameSchema = z.object({
   mode: z.enum(["reading", "recitation", "homework", "writing"]),
   gradeBand: z.string().min(1),
   transcript: z.string().optional(),
+  ocrText: z.string().optional(),
   attentionScore: z.number().min(0).max(1).optional(),
   taskHint: z.string().optional(),
   gazePoint: z
@@ -45,7 +49,54 @@ app.post("/api/analyze/focus", async (req, res) => {
       ...result,
       sessionId: session.id,
       sessionSummary: summary.summary,
-      turnCount: summary.turnCount
+      turnCount: summary.turnCount,
+      ocrText: payload.ocrText
+    };
+    res.json(response);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: error instanceof Error ? error.message : "Unknown error"
+    });
+  }
+});
+
+app.post("/api/analyze/upload", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      res.status(400).json({ error: "image file is required" });
+      return;
+    }
+
+    const mode = String(req.body.mode || "homework");
+    const gradeBand = String(req.body.gradeBand || "Upper elementary");
+    const transcript = req.body.transcript ? String(req.body.transcript) : undefined;
+    const attentionScore = req.body.attentionScore ? Number(req.body.attentionScore) : undefined;
+    const sessionId = req.body.sessionId ? String(req.body.sessionId) : undefined;
+    const ocrText = await extractTextFromImageBuffer(req.file.buffer);
+
+    const payload: FocusFramePayload = {
+      sessionId,
+      mode: focusFrameSchema.shape.mode.parse(mode),
+      gradeBand,
+      transcript,
+      attentionScore,
+      ocrText,
+      imageBase64: req.file.buffer.toString("base64")
+    };
+
+    const session = getOrCreateSession(payload);
+    const prior = getSessionSummary(session.id);
+    const result = await analyzeFocusFrame({ ...payload, sessionId: session.id }, prior.summary);
+    appendTurn(session.id, payload, result);
+    const summary = getSessionSummary(session.id);
+
+    const response: AnalyzeFocusResponse = {
+      ...result,
+      sessionId: session.id,
+      sessionSummary: summary.summary,
+      turnCount: summary.turnCount,
+      ocrText
     };
     res.json(response);
   } catch (error) {

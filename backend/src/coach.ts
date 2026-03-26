@@ -18,6 +18,7 @@ function buildUserPrompt(payload: FocusFramePayload, sessionSummary?: string) {
     `mode: ${payload.mode}`,
     `grade_band: ${payload.gradeBand}`,
     `transcript: ${payload.transcript || "none"}`,
+    `ocr_text: ${payload.ocrText || "none"}`,
     `attention_score: ${payload.attentionScore ?? "unknown"}`,
     `task_hint: ${payload.taskHint || "none"}`,
     `gaze_point: ${payload.gazePoint ? `${payload.gazePoint.x.toFixed(3)},${payload.gazePoint.y.toFixed(3)}` : "none"}`,
